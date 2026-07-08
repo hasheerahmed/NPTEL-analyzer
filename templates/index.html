@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPTEL Course Analyzer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container wide-container">
+        <header class="main-header">
+            <h1>NPTEL Course Analyzer</h1>
+            <p>Intelligently filter your open electives and analyze historical success rates.</p>
+        </header>
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for message in messages %}
+                <p class="error-msg">⚠️ {{ message }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <section class="upload-card">
+            <form action="/analyze" method="POST" enctype="multipart/form-data" id="analyze-form" onsubmit="showLoader()">
+                
+                <div class="toggle-group">
+                    <span class="toggle-title">Input Method:</span>
+                    <label class="radio-label">
+                        <input type="radio" name="input_mode" value="pdf" checked onclick="toggleInputMode('pdf')"> 
+                        Upload Syllabus PDF
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="input_mode" value="text" onclick="toggleInputMode('text')"> 
+                        Enter Text
+                    </label>
+                </div>
+
+                <hr class="divider">
+
+                <div class="info-alert">
+                    <small><strong>Note:</strong> Courses in the uploaded file/text that are not available in the NPTEL database may not be displayed.</small>
+                </div>
+
+                <div id="pdf_input_area" class="input-group">
+                    <label>1. Upload Syllabus (PDF, Max 1MB)</label>
+                    <input type="file" name="syllabus_pdf" id="syllabus_pdf" accept=".pdf">
+                </div>
+
+                <div id="text_input_area" class="input-group" style="display: none;">
+                    <label>1. Enter Courses Manually</label>
+                    <textarea name="manual_courses" id="manual_courses" rows="3" placeholder="Enter course code / course ID / course name"></textarea>
+                    <small>Eg: noc23-cs54, 106105159, Embedded Systems Design (separated by commas)</small>
+                </div>
+
+                <div class="input-group">
+                    <label>2. Upload Past Marksheets (Up to 15 PDFs, Optional)</label>
+                    <input type="file" name="marksheet_pdf" id="marksheet_pdf" accept=".pdf" multiple>
+                    <small>Hold 'Ctrl' or 'Command' to select multiple files.<br>
+                    <span class="highlight-note"><strong>Note:</strong> Upload only if you want to know if any previous semester subject exists in the desired NPTEL course list.</span></small>
+                </div>
+
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="sort_easy" id="sort_easy"> 
+                        Sort by <strong>Easy to Score</strong> ratio (Highest at the top)
+                    </label>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary" id="submit-btn">
+                        <span id="submit-text">Run Analysis</span>
+                        <div class="loader" id="submit-loader" style="display: none;"></div>
+                    </button>
+                    <a href="/" class="btn btn-secondary">Clear</a>
+                </div>
+            </form>
+        </section>
+
+        {% if courses != None %}
+        <section class="results-section">
+            <div class="disclaimer">
+                <strong>⚠️ Note on Course Matching:</strong> This tool maps electives against your marksheet based on subject titles. It may not detect conceptual overlaps (e.g., Microcontroller modules vs. Embedded Systems). Review syllabus carefully.
+            </div>
+
+            {% if courses|length == 0 %}
+                <div class="empty-state">No courses detected in the provided input.</div>
+            {% else %}
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sl.No</th>
+                                <th>Status</th>
+                                <th>Course Title</th>
+                                <th>Duration (in weeks)</th>
+                                <th>Course ID</th>
+                                <th>Registered</th>
+                                <th>Certified</th>
+                                <th>Min / Max Marks</th>
+                                <th>Avg Marks</th>
+                                <th>Pass Ratio</th>
+                                <th>Easy to Score</th>
+                                <th>Link</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for course in courses %}
+                                <tr class="{% if course.is_nptel == false %}row-swayam{% elif course.already_studied %}row-studied{% else %}row-new{% endif %}">
+                                    <td class="bold-cell">{{ loop.index }}</td>
+                                    
+                                    <td class="status-cell">
+                                        {% if course.is_nptel == false %}
+                                            <span class="badge badge-swayam">External</span>
+                                        {% elif course.already_studied %}
+                                            <span class="badge badge-studied">Already Studied</span>
+                                        {% else %}
+                                            <span class="badge badge-new">New Elective</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td class="title-cell"><strong>{{ course.title }}</strong></td>
+
+                                    <td class="duration-cell">
+                                        {% if course.duration_weeks and course.duration_weeks > 0 %}
+                                            {{ course.duration_weeks }} weeks
+                                        {% else %}
+                                            <span class="no-data-cell">—</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td class="code-font">{{ course.course_id }}</td>
+                                    
+                                    {% if course.is_nptel and (course.maximum_marks > 0 or course.registered > 0) %}
+                                        <td>{{ course.registered }}</td>
+                                        <td>{{ course.certified }}</td>
+                                        
+                                        {% if course.maximum_marks > 0 %}
+                                            <td>{{ course.minimum_marks }} / {{ course.maximum_marks }}</td>
+                                            <td>{{ course.average }}</td>
+                                            <td><strong>{{ course.pass_ratio }}%</strong></td>
+                                            <td class="highlight-stat">{{ course.easy_to_score_ratio }}%</td>
+                                        {% else %}
+                                            <td colspan="4" class="pending-data">Exams not yet completed</td>
+                                        {% endif %}
+                                    {% else %}
+                                        <td colspan="6" class="no-data-cell">Historical Data Unavailable</td>
+                                    {% endif %}
+
+                                    <td class="link-cell">
+                                        {% if course.url %}
+                                            <a href="{{ course.url }}" target="_blank" rel="noopener noreferrer" class="link-icon-btn" title="Open on NPTEL">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                                    <polyline points="15 3 21 3 21 9"></polyline>
+                                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                                </svg>
+                                            </a>
+                                        {% else %}
+                                            <span class="no-data-cell">—</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </section>
+        
+        <div class="post-table-note">
+            <small><strong>* Note:</strong> Courses with <em>Historical Data Unavailable</em> are either newly introduced courses OR certificate exams are not available for this course, so credit transfer for this course is not possible.</small>
+        </div>
+        {% endif %}
+
+        <footer class="app-footer">
+            <div class="footer-content">
+                <span class="version-badge">V 1.0</span>
+                <span class="update-date">NPTEL courses data last updated: <strong>{{ last_updated }}</strong></span>
+            </div>
+        </footer>
+
+    </div> <script>
+        function toggleInputMode(mode) {
+            const pdfArea = document.getElementById('pdf_input_area');
+            const textArea = document.getElementById('text_input_area');
+            if (mode === 'pdf') {
+                pdfArea.style.display = 'block';
+                textArea.style.display = 'none';
+            } else {
+                pdfArea.style.display = 'none';
+                textArea.style.display = 'block';
+            }
+        }
+
+        function showLoader() {
+            document.getElementById('submit-text').style.display = 'none';
+            document.getElementById('submit-loader').style.display = 'inline-block';
+            document.getElementById('submit-btn').classList.add('btn-loading');
+        }
+    </script>
+</body>
+</html>

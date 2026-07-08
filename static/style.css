@@ -1,0 +1,376 @@
+/* --- Modern Variables & Reset --- */
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --bg-color: #f3f4f6;
+    --card-bg: #ffffff;
+    --text-main: #111827;
+    --text-muted: #6b7280;
+    --border-color: #e5e7eb;
+    
+    /* Row Colors */
+    --row-studied-bg: #fef2f2;
+    --row-studied-border: #fca5a5;
+    --row-new-bg: #ffffff;
+    --row-swayam-bg: #f9fafb;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.5;
+}
+
+.wide-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 2.5rem 1rem;
+}
+
+/* --- Headers --- */
+.main-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.main-header h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--text-main);
+}
+
+.main-header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
+
+/* --- Card & Forms --- */
+.upload-card {
+    background: var(--card-bg);
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--border-color);
+    margin-bottom: 2.5rem;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.input-group input[type="file"], textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #f9fafb;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.input-group input[type="file"]:hover, textarea:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+.input-group small {
+    display: block;
+    margin-top: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* --- Toggles & Checkboxes --- */
+.toggle-group, .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: #f9fafb;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1.5rem;
+}
+
+.toggle-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.radio-label, .checkbox-label {
+    cursor: pointer;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* --- Buttons --- */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-align: center;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    flex: 1; /* Changed to 1 for a 50/50 split */
+}
+
+.btn-primary:hover { background-color: var(--primary-hover); }
+
+.btn-secondary {
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1px solid var(--border-color);
+    flex: 1; /* Shares 50/50 space */
+}
+
+.btn-secondary:hover { background-color: #e5e7eb; }
+/* Spinner Animation */
+.loader {
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.btn-loading { cursor: not-allowed; opacity: 0.8; }
+
+
+/* --- Table Styling --- */
+.table-container {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+    
+    /* Strict scroll boundaries */
+    width: 100%;
+    max-height: 600px; 
+    overflow: auto; /* Handles both X and Y scrolling perfectly */
+    display: block; /* Forces the container to respect dimensions */
+}
+
+table {
+    /* THE MAGIC FIX: Force the table to stretch to the exact size of the text */
+    width: max-content; 
+    
+    /* Ensure it doesn't shrink smaller than the screen if there are only a few columns */
+    min-width: 100%; 
+    
+    border-collapse: collapse;
+    text-align: left;
+    white-space: nowrap;
+}
+
+th, td {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+
+th {
+    background-color: #f8fafc;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    
+    /* Prevents the background from turning transparent when scrolling right */
+    background-clip: padding-box; 
+}
+
+/* Ensure the last column has padding so text doesn't touch the edge of the scroll box */
+th:last-child, td:last-child {
+    padding-right: 2rem;
+}
+
+/* Dynamic Row Highlighting */
+.row-studied {
+    background-color: var(--row-studied-bg);
+    border-left: 4px solid #ef4444; /* Hard red line on the left to make it obvious */
+}
+
+.row-studied td {
+    color: #7f1d1d; /* Darker red text */
+}
+
+.row-swayam { background-color: var(--row-swayam-bg); color: var(--text-muted); }
+
+/* Badges */
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+.badge-new { background-color: #dcfce7; color: #166534; }
+.badge-studied { background-color: #fecaca; color: #991b1b; }
+.badge-swayam { background-color: #e5e7eb; color: #4b5563; }
+
+/* Specific Cells */
+.code-font {
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    color: var(--text-muted);
+}
+.highlight-stat {
+    font-weight: 700;
+    color: #047857;
+    background-color: #ecfdf5;
+}
+.no-data-cell, .pending-data {
+    text-align: center;
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.duration-cell {
+    white-space: nowrap;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* --- Link Column --- */
+.link-cell {
+    text-align: center;
+}
+
+.link-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    color: var(--primary);
+    background-color: #eef2ff;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+}
+
+.link-icon-btn:hover {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* Disclaimer & Flash Messages */
+.disclaimer {
+    background-color: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+.flash-messages .error-msg {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+/* --- New Alerts & Highlights --- */
+.info-alert {
+    background-color: #f0f9ff;
+    border-left: 3px solid #0ea5e9;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    color: #0369a1;
+}
+
+.highlight-note {
+    display: inline-block;
+    margin-top: 0.5rem;
+    background-color: #fffbeb;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.post-table-note {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-muted);
+}
+
+/* --- Footer --- */
+.app-footer {
+    max-width: 1300px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+
+.version-badge {
+    background-color: var(--text-main);
+    color: white;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+}
+
+.update-date {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
