@@ -374,3 +374,61 @@ th:last-child, td:last-child {
     font-size: 0.9rem;
     color: var(--text-muted);
 }
+
+/* ========================================================= */
+/* --- MOBILE RESPONSIVENESS (NEW) --- */
+/* ========================================================= */
+
+@media (max-width: 768px) {
+    /* Reduce edge padding on phones */
+    .wide-container {
+        padding: 1.5rem 1rem;
+    }
+
+    /* Shrink the main title so it fits on one line */
+    .main-header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .main-header p {
+        font-size: 1rem;
+    }
+
+    /* Shrink padding inside the white form card */
+    .upload-card {
+        padding: 1.5rem;
+    }
+
+    /* Fix the squished Input Method Toggles */
+    .toggle-group {
+        flex-direction: column;
+        align-items: flex-start; /* Stack them on the left */
+        gap: 0.75rem;
+    }
+
+    /* Allow the checkbox label to wrap naturally if needed */
+    .checkbox-label {
+        align-items: flex-start;
+    }
+    .checkbox-label input {
+        margin-top: 0.25rem; /* Align box with top of wrapped text */
+    }
+
+    /* Stack the Run Analysis and Clear buttons vertically */
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .btn {
+        width: 100%; /* Make buttons full-width for easy thumb-tapping */
+    }
+
+    /* Fix the broken Footer layout */
+    .footer-content {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        gap: 0.75rem;
+    }
+}

@@ -59,25 +59,7 @@ class CatalogUpdater:
     def extract_duration_weeks(self, page_html):
         """
         Derives course duration (in weeks) from the course page's
-        embedded SvelteKit hydration data (view-source:https://nptel.ac.in/courses/{id}).
-
-        Two different courses can format their week units differently
-        (e.g. 'Week 1' vs 'week-01'), so this uses a two-tier approach:
-
-        Tier 1 - Authoritative: when the page has syllabus data, it includes
-        a `meta` array with an explicit entry like:
-            {label:"Duration",value:"12 weeks"}
-        This is the most reliable source when present.
-
-        Tier 2 - Fallback: when `syllabus` is null (as seen on some courses),
-        fall back to counting the `units` array, matching week names
-        regardless of format - 'Week 1', 'week-01', 'Week_12', 'WEEK 3', etc.
-        Non-week units like {id:13,name:"Live Session",...} are naturally
-        excluded since they don't match the week-name pattern.
-
-        This is more reliable than the /api/downloads/ assignments list,
-        since assignments are only present once published, whereas every
-        course page lists its full week structure regardless.
+        embedded SvelteKit hydration data.
         """
         if not page_html:
             return 0
@@ -91,12 +73,14 @@ class CatalogUpdater:
         if meta_match:
             return int(meta_match.group(1))
 
-        # Tier 2: fall back to the units array, format-agnostic on separators
+        # Tier 2: fall back to the units array, matching Week, Module, or Unit
+        # This regex matches: name:"Unit 12", name:"MODULE 1", name:"Week 01: Intro", etc.
         unit_matches = re.findall(
-            r'name:"week[\s\-_]?0*(\d+)"',
+            r'name:"(?:week|module|unit)[\s\-_]?0*(\d+)[^"]*"',
             page_html,
             re.IGNORECASE
         )
+        
         if unit_matches:
             return max(int(m) for m in unit_matches)
 
