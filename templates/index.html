@@ -4,6 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NPTEL Course Analyzer</title>
+
+    <!-- ========================================== -->
+    <!-- SEO META TAGS (For Google Search)          -->
+    <!-- ========================================== -->
+    <meta name="description" content="Intelligently analyze NPTEL courses, filter open electives against your marksheet, and check historical pass ratios and easy-to-score metrics to find the best courses for credit transfer.">
+    <meta name="keywords" content="NPTEL, course analyzer, open electives, pass ratio, SWAYAM, easy NPTEL courses, credit transfer, engineering electives">
+    <meta name="author" content="NPTEL Course Analyzer">
+    
+    <!-- Open Graph Tags (For sharing links on WhatsApp, LinkedIn, etc.) -->
+    <meta property="og:title" content="NPTEL Course Analyzer">
+    <meta property="og:description" content="Find the easiest NPTEL courses and filter out subjects you've already studied.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nptel-analyzer.onrender.com">
+
+    <!-- ========================================== -->
+    <!-- GOOGLE ANALYTICS                           -->
+    <!-- ========================================== -->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YOUR_ID_HERE"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-Z06TY8Y4L0');
+    </script>
+    <!-- ========================================== -->
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
@@ -183,7 +211,9 @@
             </div>
         </footer>
 
-    </div> <script>
+    </div> 
+    
+    <script>
         function toggleInputMode(mode) {
             const pdfArea = document.getElementById('pdf_input_area');
             const textArea = document.getElementById('text_input_area');
